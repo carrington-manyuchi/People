@@ -14,6 +14,22 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+                .padding()
+                .onAppear {
+                    print(" 👇🏻 Users response")
+                    do {
+                        let usersResponse = try StaticJSONMapper.decode(file: "UserStaticData", type: UsersResponse.self)
+                        dump(usersResponse)
+                        
+                        print(" 👇🏻 Single User response")
+                        let singleUsersResponse = try StaticJSONMapper.decode(file: "SingleUserData", type: UserDetailResponse.self)
+                        dump(singleUsersResponse)
+                        
+                    }  catch {
+                        print("Error decoding JSON: \(error)")
+                    }
+                    
+                }
         }
         .padding()
     }

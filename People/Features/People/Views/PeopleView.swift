@@ -21,7 +21,11 @@ struct PeopleView: View {
                         columns: columns,
                         spacing: 20) {
                             ForEach(users, id: \.id) { user in
-                                PersonItemView(user: user)
+                                NavigationLink {
+                                    DetailView()
+                                } label: {
+                                    PersonItemView(user: user)
+                                }
                             }
                         }
                         .padding()

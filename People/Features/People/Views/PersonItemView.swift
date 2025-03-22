@@ -11,15 +11,11 @@ struct PersonItemView: View {
     let user: User
     var body: some View {
         VStack(spacing: .zero) {
-//            Rectangle()
-//                .fill(Color.blue)
-//                .frame(height: 130)
-            
             AsyncImage(url: .init(string: user.avatar)) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(height: 130)
+                    .frame(height: 150)
                     .clipped()
             } placeholder: {
                 ProgressView()

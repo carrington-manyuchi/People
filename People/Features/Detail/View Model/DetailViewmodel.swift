@@ -13,7 +13,7 @@ final class DetailViewModel: ObservableObject {
     
     
     func fetchDetails(for id: Int) {
-        NetworkingManager.shared.request("https://reqres.in/api/users/{id}", type: UserDetailResponse.self) { [] res in
+        NetworkingManager.shared.request("https://reqres.in/api/users/\(id)", type: UserDetailResponse.self) { [] res in
             DispatchQueue.main.async {
                 switch res {
                 case .success(let response):

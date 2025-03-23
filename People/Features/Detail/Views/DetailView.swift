@@ -37,20 +37,15 @@ struct DetailView: View {
 }
 
 #Preview {
-    var previewUserId: Int {
-        let users = try!StaticJSONMapper.decode(file: "UsersStaticData", type: UsersResponse.self)
-        return users.data.first!.id
-    }
-    
     NavigationStack {
-        DetailView(userId: previewUserId)
+        DetailView(userId: 3)
     }
 }
 
 private extension DetailView {
     var general: some View {
             VStack(alignment: .leading, spacing: 18) {
-                PillView(id:detailsViewModel.userInfo?.data.id ?? 0)
+                PillView(id: detailsViewModel.userInfo?.data.id ?? 0)
                 Group {
                     firstName
                     lastName

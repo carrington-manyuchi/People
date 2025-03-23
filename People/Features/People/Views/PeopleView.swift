@@ -10,7 +10,8 @@ import SwiftUI
 struct PeopleView: View {
     private let columns = Array(repeating: GridItem(.flexible()), count: 2)
     
-    @State private var users: [User] = []
+    @StateObject private var viewModel = PeopleViewModel()
+    @State private var shouldShowCreate = false
     
     var body: some View {
         NavigationStack {
@@ -20,9 +21,9 @@ struct PeopleView: View {
                     LazyVGrid(
                         columns: columns,
                         spacing: 20) {
-                            ForEach(users, id: \.id) { user in
+                            ForEach(viewModel.users, id: \.id) { user in
                                 NavigationLink {
-                                    DetailView()
+                                    DetailView(userId: user.id)
                                 } label: {
                                     PersonItemView(user: user)
                                 }
@@ -38,12 +39,10 @@ struct PeopleView: View {
                 }
             }
             .onAppear {
-                do {
-                    let res = try StaticJSONMapper.decode(file: "UserStaticData", type: UsersResponse.self)
-                    users = res.data
-                } catch {
-                    
-                }
+                viewModel.fetchUsers()
+            }
+            .sheet(isPresented: $shouldShowCreate) {
+                CreateView()
             }
         }
     }
@@ -61,6 +60,7 @@ private extension PeopleView {
     
     var create: some View {
         Button {
+            shouldShowCreate.toggle()
         } label: {
             Symbols.plus
                 .font(

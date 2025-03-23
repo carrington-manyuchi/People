@@ -9,7 +9,9 @@ import SwiftUI
 
 struct DetailView: View {
     
-    @State private var userInfo: UserDetailResponse?
+    let userId: Int
+    @StateObject private var detailsViewModel = DetailViewModel()
+    
     var body: some View {
         ZStack {
             background
@@ -29,25 +31,26 @@ struct DetailView: View {
         }
         .navigationTitle("Details")
         .onAppear {
-            do {
-                userInfo = try StaticJSONMapper.decode(file: "SingleUserData", type: UserDetailResponse.self)
-            } catch {
-                print(error)
-            }
+            detailsViewModel.fetchDetails(for: userId)
         }
     }
 }
 
 #Preview {
+    var previewUserId: Int {
+        let users = try!StaticJSONMapper.decode(file: "UsersStaticData", type: UsersResponse.self)
+        return users.data.first!.id
+    }
+    
     NavigationStack {
-        DetailView()
+        DetailView(userId: previewUserId)
     }
 }
 
 private extension DetailView {
     var general: some View {
             VStack(alignment: .leading, spacing: 18) {
-                PillView(id: userInfo?.data.id ?? 0)
+                PillView(id:detailsViewModel.userInfo?.data.id ?? 0)
                 Group {
                     firstName
                     lastName
@@ -66,7 +69,7 @@ private extension DetailView {
     
     @ViewBuilder
     var avatar: some View {
-        if let avatarAbsoluteString = userInfo?.data.avatar,
+        if let avatarAbsoluteString = detailsViewModel.userInfo?.data.avatar,
            let avatarUrl = URL(string: avatarAbsoluteString) {
             
             AsyncImage(url: avatarUrl) { image in
@@ -85,9 +88,9 @@ private extension DetailView {
     @ViewBuilder
     var link: some View {
         
-        if let supportAbsolteString = userInfo?.support.url,
+        if let supportAbsolteString = detailsViewModel.userInfo?.support.url,
            let supportURL = URL(string: supportAbsolteString),
-           let suppportTxt = userInfo?.support.text {
+           let suppportTxt = detailsViewModel.userInfo?.support.text {
             
             Link(destination: supportURL) {
                 VStack(alignment: .leading, spacing: 8) {
@@ -116,7 +119,7 @@ private extension DetailView {
                 .system(.body, design: .rounded)
                 .weight(.semibold)
             )
-        Text(userInfo?.data.firstName ?? "-")
+        Text(detailsViewModel.userInfo?.data.firstName ?? "-")
             .font(
                 .system(.subheadline, design: .rounded)
             )
@@ -132,7 +135,7 @@ private extension DetailView {
                 .system(.body, design: .rounded)
                 .weight(.semibold)
             )
-        Text(userInfo?.data.lastName ?? "-")
+        Text(detailsViewModel.userInfo?.data.lastName ?? "-")
             .font(
                 .system(.subheadline, design: .rounded)
             )
@@ -148,7 +151,7 @@ private extension DetailView {
                 .system(.body, design: .rounded)
                 .weight(.semibold)
             )
-        Text(userInfo?.data.email ?? "-")
+        Text(detailsViewModel.userInfo?.data.email ?? "-")
             .font(
                 .system(.subheadline, design: .rounded)
             )

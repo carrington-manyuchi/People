@@ -11,13 +11,15 @@ final class CreateViewModel: ObservableObject {
     
     @Published var person = CreateNewPerson()
     @Published private(set) var submissionState: SubmissionState?
+    @Published private(set) var error: NetworkingManager.NetworkingError?
+    @Published var hasError = false
     
     func create() {
         let encoder = JSONEncoder()
         encoder.keyEncodingStrategy = .convertToSnakeCase
         let data = try? encoder.encode(person)
         
-        NetworkingManager.shared.request(methodType: .POST(data: data), "https://reqres.in/api/users") { [weak self] res in
+        NetworkingManager.shared.request(methodType: .POST(data: data), "https://reqres.in/api/usersx") { [weak self] res in
             DispatchQueue.main.async {
                 switch res {
                 case .success:
@@ -26,6 +28,8 @@ final class CreateViewModel: ObservableObject {
                 case .failure(let error):
                     print("Error: \(error)")
                     self?.submissionState = .unsuccessful
+                    self?.hasError = true
+                    self?.error = error as? NetworkingManager.NetworkingError
                 }
             }
         }

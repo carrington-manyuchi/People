@@ -35,6 +35,7 @@ struct CreateView: View {
                     dismiss()
                 }
             }
+            .alert(isPresented: $createViewModel.hasError, error: createViewModel.error) { }
         }
     }
 }

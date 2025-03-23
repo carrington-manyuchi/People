@@ -33,6 +33,7 @@ struct DetailView: View {
         .onAppear {
             detailsViewModel.fetchDetails(for: userId)
         }
+        .alert(isPresented: $detailsViewModel.hasError, error: detailsViewModel.error) { }
     }
 }
 

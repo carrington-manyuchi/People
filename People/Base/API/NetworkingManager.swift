@@ -21,7 +21,7 @@ final class NetworkingManager {
     ) {
         
         guard let url = URL(string: absoluteURL) else {
-            completion(.failure(NetwrokingError.invalidURL))
+            completion(.failure(NetworkingError.invalidURL))
             return
         }
         
@@ -29,19 +29,19 @@ final class NetworkingManager {
         let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
             
             if error != nil {
-                completion(.failure(NetwrokingError.custom(error: error!)))
+                completion(.failure(NetworkingError.custom(error: error!)))
                 return
             }
             
             guard let response = response as? HTTPURLResponse,
                   200..<300 ~= response.statusCode else {
                 let statusCode = (response as! HTTPURLResponse).statusCode
-                completion(.failure(NetwrokingError.invalidStatusCode(statusCode: statusCode)))
+                completion(.failure(NetworkingError.invalidStatusCode(statusCode: statusCode)))
                 return
             }
             
             guard let data = data else {
-                completion(.failure(NetwrokingError.invalidData))
+                completion(.failure(NetworkingError.invalidData))
                 return
             }
             
@@ -53,7 +53,7 @@ final class NetworkingManager {
                 completion(.success(res))
                 
             } catch {
-                completion(.failure(NetwrokingError.failedToDecode(error: error)))
+                completion(.failure(NetworkingError.failedToDecode(error: error)))
             }
             
         }
@@ -68,7 +68,7 @@ final class NetworkingManager {
         completion: @escaping (Result<Void, Error>) -> Void
     ) {
         guard let url = URL(string: absoluteUrl) else {
-            completion(.failure(NetwrokingError.invalidURL))
+            completion(.failure(NetworkingError.invalidURL))
             return
         }
         
@@ -76,19 +76,19 @@ final class NetworkingManager {
         let dataTask = URLSession.shared.dataTask(with: request) { data, response, error in
             
             if error != nil {
-                completion(.failure(NetwrokingError.custom(error: error!)))
+                completion(.failure(NetworkingError.custom(error: error!)))
                 return
             }
             
             guard let response = response as? HTTPURLResponse,
                   200..<300 ~= response.statusCode else {
                 let statusCode = (response as! HTTPURLResponse).statusCode
-                completion(.failure(NetwrokingError.invalidStatusCode(statusCode: statusCode)))
+                completion(.failure(NetworkingError.invalidStatusCode(statusCode: statusCode)))
                 return
             }
             
             guard let data = data else {
-                completion(.failure(NetwrokingError.invalidData))
+                completion(.failure(NetworkingError.invalidData))
                 return
             }
             
@@ -101,12 +101,29 @@ final class NetworkingManager {
 }
 
 extension NetworkingManager {
-    enum NetwrokingError: Error {
+    enum NetworkingError: Error, LocalizedError {
         case invalidURL
         case custom(error: Error)
         case invalidStatusCode(statusCode: Int)
         case invalidData
         case failedToDecode(error: Error)
+    }
+}
+
+extension NetworkingManager.NetworkingError {
+    var errorDescription: String? {
+        switch self {
+        case .invalidURL:
+            return "URL is not valid"
+        case .custom(error: let err):
+            return "Something went wrong \(err.localizedDescription)"
+        case .invalidStatusCode:
+            return "Status code falls into the wrong range"
+        case .invalidData:
+            return "Return data is invalid"
+        case .failedToDecode:
+            return "Failed to decode"
+        }
     }
 }
 
